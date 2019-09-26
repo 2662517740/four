@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 @Data
 public class BaseEntity implements Serializable {
+    private String id;
     private String createBy;//创建人
     private String gmtCreate;//创建时间
     private String lastModifiedBy;//更新人

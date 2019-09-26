@@ -1,7 +1,6 @@
 package com.h5.entity;
 
 import java.time.LocalDateTime;
-import com.h5.common.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,29 +27,18 @@ public class Score extends BaseEntity {
     @TableField("snakeId")
     private String snakeId;
 
-    private Boolean 是否通过;
+    @TableField("is_pass")
+    private Boolean is_pass ;
 
     @TableField("scoreCheckpoint")
     private Integer scoreCheckpoint;
 
-    private String 难度;
+    @TableField("scoreDifficulty")
+    private String scoreDifficulty;
 
     @TableField("scoreSC")
     private String scoreSC;
 
-    private String createBy;
-
-    private LocalDateTime gmtCreate;
-
-    private String lastModifiedBy;
-
-    private LocalDateTime gmtModified;
-
-    private Boolean isDelete;
-
-    private Integer version;
-
-    private Integer sortNo;
 
 
 }
