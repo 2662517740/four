@@ -1,6 +1,7 @@
 package com.h5.controller;
 
 import com.h5.entity.Room;
+import com.h5.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class ClientController {
 
     @PostMapping(value = "/Client")
     @ApiOperation("客户端")
-    public Room Client(String roomNumber ,User user) {
+    public Room Client(String roomNumber , User user) {
 //        String roomNumber ,User user
         int rIndex = -1;
         for (int i = 0 ; i < rs.size() ; i++){
@@ -36,7 +37,7 @@ public class ClientController {
         }
         rs.get(rIndex).setRoomNumber(roomNumber);
         rs.get(rIndex).getUList().add(user);
-        System.out.println(user.getUId());
+        System.out.println(user.getId());
         System.out.println(rs.size() + ", " + rIndex);
         System.out.println(rs.get(rIndex));
         return rs.get(rIndex);
@@ -47,7 +48,7 @@ public class ClientController {
     @PostMapping(value = "Client2")
     @ApiOperation(value = "测试")
     public User Client(User user){
-        System.out.println(user.getUId());
+        System.out.println(user.getId());
         System.out.println(user);
 //        user.setUId("1234566");
 //        user.setScore(15);

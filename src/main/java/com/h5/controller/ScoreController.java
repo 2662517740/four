@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author jobob
- * @since 2019-09-23
+ * @since 2019-09-26
  */
 @RestController
 @RequestMapping("/score/score")
