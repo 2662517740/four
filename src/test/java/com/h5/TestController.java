@@ -1,8 +1,15 @@
 package com.h5;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.h5.entity.Score;
+import com.h5.entity.Snake;
 import com.h5.entity.User;
 import com.h5.entity.UserVO;
 import com.h5.redis.RedisUtils;
+import com.h5.service.IScoreService;
+import com.h5.service.ISnakeService;
 import com.h5.service.IUserService;
 import com.h5.utils.CreateMD5;
 import com.h5.utils.UUIDUtil;
@@ -28,6 +35,12 @@ public class TestController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IScoreService scoreService;
+
+    @Autowired
+    private ISnakeService snakeService;
 
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -102,4 +115,76 @@ public class TestController {
         user.setUserNick("天王凉破");
         userService.updateById(user);
     }
+
+    /**
+     * 创建蛇
+     */
+    @Test
+    public void setSnake(){
+        Snake snake = new Snake();
+        snake.setId(UUIDUtil.uuidStr());
+        snake.setSnakeColor("blue");
+        snake.setSnakeSkin("喜羊羊");
+        snake.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+        snake.setGmtCreate(df.format(new Date()));
+        snake.setGmtModified(df.format(new Date()));
+        snake.setIsDelete(0);
+        snake.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+        snake.setVersion(0);
+        snake.setSortNo(0);
+        snakeService.save(snake);
+        System.out.print(snake);
+    }
+
+    /**
+     * 修改蛇的颜色
+     */
+    @Test
+    public void updateSnake(){
+        Snake snake = new Snake();
+        snake.setId("03399e2e555549ce95fac7e0bdaee828");
+        snake.setSnakeColor("red");
+        snake.setGmtModified(df.format(new Date()));
+        snake.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+        snake.setVersion(1);
+        snakeService.updateById(snake);
+    }
+
+    /**
+     * 蛇列表
+     */
+    @Test
+    public void getSnake(){
+        Snake snake= new Snake();
+        snake.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+        IPage<Snake> iPage = new Page<>();
+        iPage.setPages(0);
+        iPage.setCurrent(0L);
+        IPage<Snake> snakeIPage = snakeService.page(iPage , new QueryWrapper<Snake>().eq("create_by" ,snake.getCreateBy()));
+        System.out.println(snakeIPage);
+    }
+    /**
+     * 创建分数
+     */
+    @Test
+    public void setScore(){
+        Score score = new Score();
+        score.setId(UUIDUtil.uuidStr());
+        score.setIs_pass(1);
+        score.setScoreCheckpoint(1);
+        score.setScoreDifficulty("低");
+        score.setScoreSC("1100");
+        score.setSnakeId("156418543212");
+        score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
+        score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+        score.setGmtCreate(df.format(new Date()));
+        score.setGmtModified(df.format(new Date()));
+        score.setIsDelete(0);
+        score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+        score.setVersion(0);
+        score.setSortNo(0);
+        scoreService.save(score);
+        System.out.println(score);
+    }
+
 }

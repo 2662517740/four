@@ -28,7 +28,7 @@ public class Score extends BaseEntity {
     private String snakeId;
 
     @TableField("is_pass")
-    private Boolean is_pass ;
+    private int is_pass ;
 
     @TableField("scoreCheckpoint")
     private Integer scoreCheckpoint;
