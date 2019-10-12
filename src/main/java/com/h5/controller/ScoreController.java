@@ -1,11 +1,13 @@
 package com.h5.controller;
 
 
+import com.h5.entity.Score;
 import com.h5.entity.ScoreVO;
 import com.h5.entity.response.AppResponse;
 import com.h5.redis.RedisUtils;
 import com.h5.service.IScoreService;
 import com.h5.utils.UUIDUtil;
+import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -52,21 +56,39 @@ public class ScoreController {
     @PostMapping(value = "setScore")
     @Transactional(readOnly = true)
     public AppResponse setScore(ScoreVO score){
-//        String userName = redisUtils.get(score.getToken());
-//        score.setId(UUIDUtil.uuidStr());
-//        score.setCreateBy(userName);
-//        score.setGmtCreate(df.format(new Date()));
-//        score.setGmtModified(df.format(new Date()));
-//        score.setIsDelete(0);
-//        score.setLastModifiedBy(userName);
-//        score.setVersion(0);
-//        score.setSortNo(0);
-//        boolean save = scoreService.save(score);
-//        if (save){
-//            return AppResponse.success("创建成功！");
-//        }
-        return AppResponse.bizError("创建失败！");
+        String userID = redisUtils.get(score.getToken());
+        score.setUserId(userID);
+        HashMap<String , Object> map = new HashMap<>();
+        map.put("userId" , score.getUserId());
+        map.put("scoreCheckpoint" , score.getScoreCheckpoint());
+        map.put("scoreDifficulty",score.getScoreDifficulty());
+        List<Score> list = (List<Score>) scoreService.listByMap(map);
+        if (list != null && list.size()!=0){
+            if ( list.get(0).getScoreSC().compareTo(score.getScoreSC()) < 0 ){
+                score.setId(list.get(0).getId());
+                score.setGmtModified(df.format(new Date()));
+                score.setLastModifiedBy(list.get(0).getUserId());
+                score.setVersion(list.get(0).getVersion());
+                scoreService.updateById(score);
+                return AppResponse.success("修改成功！");
+            }else {
+                return AppResponse.bizError("已存在");
+            }
+        }else {
+            score.setId(UUIDUtil.uuidStr());
+            score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setGmtCreate(df.format(new Date()));
+            score.setGmtModified(df.format(new Date()));
+            score.setIsDelete(0);
+            score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setVersion(0);
+            score.setSortNo(0);
+            boolean save = scoreService.save(score);
+            if (save){
+                return AppResponse.success("创建成功！");
+            }
+            return AppResponse.bizError("创建失败，请重试！");
+        }
     }
-
 
 }

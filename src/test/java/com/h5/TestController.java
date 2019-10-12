@@ -140,7 +140,7 @@ public class TestController {
      * 修改蛇的颜色
      */
     @Test
-    public void updateSnake(){
+    public void updateSnakeColor(){
         Snake snake = new Snake();
         snake.setId("03399e2e555549ce95fac7e0bdaee828");
         snake.setSnakeColor("red");
@@ -163,28 +163,53 @@ public class TestController {
         IPage<Snake> snakeIPage = snakeService.page(iPage , new QueryWrapper<Snake>().eq("create_by" ,snake.getCreateBy()));
         System.out.println(snakeIPage);
     }
+
     /**
      * 创建分数
      */
     @Test
     public void setScore(){
         Score score = new Score();
-        score.setId(UUIDUtil.uuidStr());
-        score.setIs_pass(1);
-        score.setScoreCheckpoint(1);
-        score.setScoreDifficulty("低");
-        score.setScoreSC("1100");
-        score.setSnakeId("156418543212");
         score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
-        score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
-        score.setGmtCreate(df.format(new Date()));
-        score.setGmtModified(df.format(new Date()));
-        score.setIsDelete(0);
-        score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
-        score.setVersion(0);
-        score.setSortNo(0);
-        scoreService.save(score);
-        System.out.println(score);
+        score.setScoreCheckpoint(2);
+        score.setScoreDifficulty("低");
+        score.setScoreSC("1400");
+        HashMap<String , Object> map = new HashMap<>();
+        map.put("userId" , score.getUserId());
+        map.put("scoreCheckpoint" , score.getScoreCheckpoint());
+        map.put("scoreDifficulty",score.getScoreDifficulty());
+        List<Score> list = (List<Score>) scoreService.listByMap(map);
+        if (list != null && list.size()!=0){
+            if ( list.get(0).getScoreSC().compareTo(score.getScoreSC()) < 0 ){
+                score.setId(list.get(0).getId());
+                score.setGmtModified(df.format(new Date()));
+                score.setIsDelete(0);
+                score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+                score.setVersion(1);
+                score.setSortNo(0);
+                scoreService.updateById(score);
+            }else {
+                System.out.print("已存在");
+            }
+        }else {
+            score.setId(UUIDUtil.uuidStr());
+            score.setIs_pass(1);
+//            score.setScoreCheckpoint(1);
+//            score.setScoreDifficulty("低");
+//            score.setScoreSC("1100");
+            score.setSnakeId("156418543212");
+//            score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
+            score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setGmtCreate(df.format(new Date()));
+            score.setGmtModified(df.format(new Date()));
+            score.setIsDelete(0);
+            score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setVersion(0);
+            score.setSortNo(0);
+            scoreService.save(score);
+            System.out.println(score);
+        }
+
     }
 
 }

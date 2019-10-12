@@ -80,7 +80,7 @@ public class SnakeController {
     @ApiOperation(value = "修改蛇的颜色")
     @PostMapping(value = "updateSnake")
     @Transactional(readOnly = true)
-    public AppResponse updateSnake(SnakeVO snake){
+    public AppResponse updateSnakeColor(SnakeVO snake){
         snake.setGmtModified(df.format(new Date()));
         snake.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
         snake.setVersion(1);
