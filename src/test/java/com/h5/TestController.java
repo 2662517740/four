@@ -26,6 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.springframework.data.repository.init.ResourceReader.Type.JSON;
+
+
 @SpringBootTest(classes = {test.class})
 @RunWith(SpringRunner.class)
 public class TestController {
@@ -170,10 +173,10 @@ public class TestController {
     @Test
     public void setScore(){
         Score score = new Score();
-        score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
-        score.setScoreCheckpoint(2);
+        score.setUserId("4fa3bd76a89946a09a1e1bba85413a01");
+        score.setScoreCheckpoint(1);
         score.setScoreDifficulty("低");
-        score.setScoreSC("1400");
+        score.setScoreSC("1600");
         HashMap<String , Object> map = new HashMap<>();
         map.put("userId" , score.getUserId());
         map.put("scoreCheckpoint" , score.getScoreCheckpoint());
@@ -184,7 +187,7 @@ public class TestController {
                 score.setId(list.get(0).getId());
                 score.setGmtModified(df.format(new Date()));
                 score.setIsDelete(0);
-                score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+                score.setLastModifiedBy("4fa3bd76a89946a09a1e1bba85413a01");
                 score.setVersion(1);
                 score.setSortNo(0);
                 scoreService.updateById(score);
@@ -199,17 +202,51 @@ public class TestController {
 //            score.setScoreSC("1100");
             score.setSnakeId("156418543212");
 //            score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
-            score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setCreateBy("4fa3bd76a89946a09a1e1bba85413a01");
             score.setGmtCreate(df.format(new Date()));
             score.setGmtModified(df.format(new Date()));
             score.setIsDelete(0);
-            score.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
+            score.setLastModifiedBy("4fa3bd76a89946a09a1e1bba85413a01");
             score.setVersion(0);
             score.setSortNo(0);
             scoreService.save(score);
             System.out.println(score);
         }
 
+    }
+
+    /**
+     *排行榜
+     */
+    @Test
+    public void getScoreList(){
+        Score score = new Score();
+        score.setScoreDifficulty("低");
+        IPage<Score> iPage = new Page<>();
+        iPage.setPages(0);
+        iPage.setCurrent(0L);
+        IPage<Score> scoreIPage = scoreService.page(iPage , new QueryWrapper<Score>().eq("scoreDifficulty",score.getScoreDifficulty()).orderByDesc("scoreSC"));
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println(scoreIPage.getRecords().size());
+        System.out.println(scoreIPage.getRecords());
+    }
+
+    /**
+     * 获取分数
+     */
+    @Test
+    public void grtScore(){
+        Score score = new Score();
+        score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+        IPage<Score> iPage = new Page<>();
+        iPage.setCurrent(0L);
+        iPage.setPages(0);
+//        QueryWrapper<Score> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq()
+        IPage<Score> scoreIPage = scoreService.page(iPage , new QueryWrapper<Score>().eq("create_by" , score.getCreateBy()).orderByDesc("scoreSC"));
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println(scoreIPage.getRecords().size());
+        System.out.println(scoreIPage.getRecords());
     }
 
 }

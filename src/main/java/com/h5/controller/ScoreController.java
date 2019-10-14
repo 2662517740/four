@@ -1,6 +1,9 @@
 package com.h5.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.h5.entity.Score;
 import com.h5.entity.ScoreVO;
 import com.h5.entity.response.AppResponse;
@@ -13,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -91,4 +95,39 @@ public class ScoreController {
         }
     }
 
+    /**
+     * 查询分数
+     * @Date:2019/10/14
+     * @Param:ScoreVO
+     */
+    @ApiOperation("查询分数")
+    @GetMapping(value = "/getScore")
+    @Transactional(readOnly = true)
+    public IPage<Score> getScore(ScoreVO score){
+        String id = redisUtils.get(score.getToken());
+        score.setCreateBy(id);
+        IPage<Score> iPage = new Page<>();
+        iPage.setCurrent(0L);
+        iPage.setPages(0);
+//        QueryWrapper<Score> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq()
+        IPage<Score> scoreIPage = scoreService.page(iPage , new QueryWrapper<Score>().eq("create_by" , score.getCreateBy()).orderByDesc("scoreSC"));
+        return scoreIPage;
+    }
+
+    /**
+     * 排行榜
+     * @Date:2019/10/14
+     * @Param:Score
+     */
+    @ApiOperation("排行榜")
+    @GetMapping(value = "/getScoreList")
+    @Transactional(readOnly = true)
+    public IPage<Score> getScoreList(Score score){
+        IPage<Score> iPage = new Page<>();
+        iPage.setPages(0);
+        iPage.setCurrent(0L);
+        IPage<Score> scoreIPage = scoreService.page(iPage , new QueryWrapper<Score>().eq("scoreDifficulty",score.getScoreDifficulty()).orderByDesc("scoreSC"));
+        return scoreIPage;
+    }
 }
