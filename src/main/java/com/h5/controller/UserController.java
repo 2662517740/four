@@ -145,6 +145,7 @@ public class UserController {
     public AppResponse updateNick(UserVO user){
         String id = redisUtils.get(user.getToken());
         user.setLastModifiedBy(id);
+//        user.setLastModifiedBy("2960bd6730064ca9a64059693162ba47");
         user.setGmtModified(df.format(new Date()));
         user.setVersion(user.getVersion()+1);
         boolean update =userService.updateById(user);

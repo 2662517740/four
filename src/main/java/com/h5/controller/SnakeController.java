@@ -82,9 +82,10 @@ public class SnakeController {
     @PostMapping(value = "updateSnake")
     @Transactional(readOnly = true)
     public AppResponse updateSnakeColor(SnakeVO snake){
+        String id = redisUtils.get(snake.getToken());
         snake.setGmtModified(df.format(new Date()));
-        snake.setLastModifiedBy("31112f5c840f42ad97e7e34a542e01b2");
-        snake.setVersion(1);
+        snake.setLastModifiedBy(id);
+        snake.setVersion(snake.getVersion()+1);
         boolean update = snakeService.updateById(snake);
         if (update){
             return AppResponse.success("修改成功！");

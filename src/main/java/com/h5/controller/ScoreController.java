@@ -106,6 +106,7 @@ public class ScoreController {
     public IPage<Score> getScore(ScoreVO score){
         String id = redisUtils.get(score.getToken());
         score.setCreateBy(id);
+//        score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
         IPage<Score> iPage = new Page<>();
         iPage.setCurrent(0L);
         iPage.setPages(0);

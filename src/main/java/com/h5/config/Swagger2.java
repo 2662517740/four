@@ -21,7 +21,7 @@ public class Swagger2 {
                 .apiInfo(apiInfo())
                 .select()
                 //为当前包路径
-                .apis(RequestHandlerSelectors.basePackage("com.ZB"))
+                .apis(RequestHandlerSelectors.basePackage("com.h5"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -31,7 +31,7 @@ public class Swagger2 {
                 //页面标题
                 .title("系统管理，构建RESTful API")
                 //创建人
-                .contact(new Contact("ZB", "", ""))
+                .contact(new Contact("h5", "", ""))
                 //版本号
                 .version("1.0")
                 //描述
