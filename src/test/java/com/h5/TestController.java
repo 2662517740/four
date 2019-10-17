@@ -168,6 +168,40 @@ public class TestController {
     }
 
     /**
+     * 修改蛇历史长度
+     */
+    @Test
+    public void updateLength(){
+        Snake snake = new Snake();
+        snake.setSnakeLength(123);
+        snake.setId("03399e2e555549ce95fac7e0bdaee828");
+        Snake snake1 = snakeService.getById(snake);
+        if (snake1.getSnakeLength() < snake.getSnakeLength()){
+            snake.setVersion(snake1.getVersion()+1);
+            snake.setLastModifiedBy(snake.getId());
+            snake.setGmtModified(df.format(new Date()));
+            snakeService.updateById(snake);
+        }
+        System.out.println(snakeService.getById(snake));
+    }
+
+    /**
+     * 查询蛇的最大长度
+     */
+    @Test
+    public void bestLength(){
+        Snake snake = new Snake();
+        snake.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
+        IPage<Snake> iPage = new Page<>();
+        iPage.setCurrent(0L);
+        iPage.setPages(0);
+        IPage<Snake> snakeIPage = snakeService.page(iPage ,new QueryWrapper<Snake>().eq("Create_by" , snake.getCreateBy()).orderByDesc("snakeLength"));
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println(snakeIPage.getRecords().size());
+        System.out.println(snakeIPage.getRecords().get(0));
+    }
+
+    /**
      * 创建分数
      */
     @Test

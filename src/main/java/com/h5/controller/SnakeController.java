@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -107,6 +108,45 @@ public class SnakeController {
         iPage.setCurrent(0L);
         IPage<Snake> snakeIPage = snakeService.page(iPage , new QueryWrapper<Snake>().eq("create_by" ,snake.getCreateBy()));
         return snakeIPage;
+    }
+
+    /**
+     * @Description：蛇历史长度
+     * @Date:2019/10/17
+     * @Param:SnakeVO
+     */
+    @ApiOperation("修改蛇历史长度")
+    @PostMapping("updateLength")
+    @Transactional(readOnly = true)
+    public AppResponse updateLength(SnakeVO snake){
+        String id = redisUtils.get(snake.getToken());
+        Snake snake1 = snakeService.getById(snake);
+        if (snake1.getSnakeLength() < snake.getSnakeLength()){
+            snake.setVersion(snake1.getVersion()+1);
+            snake.setLastModifiedBy(snake.getId());
+            snake.setGmtModified(df.format(new Date()));
+            boolean update = snakeService.updateById(snake);
+            if (update){
+                return AppResponse.success("修改成功！");
+            }else {
+                return AppResponse.bizError("修改失败，请重试!");
+            }
+        }
+        return AppResponse.bizError("已存在");
+    }
+
+    @ApiOperation("查询蛇的最大长度")
+    @GetMapping("bestLength")
+    @Transactional(readOnly = true)
+    public Snake bestLength(SnakeVO snake){
+        String id = redisUtils.get(snake.getToken());
+        snake.setCreateBy(id);
+        IPage<Snake> iPage = new Page<>();
+        iPage.setCurrent(0L);
+        iPage.setPages(0);
+        IPage<Snake> snakeIPage = snakeService.page(iPage ,new QueryWrapper<Snake>().eq("Create_by" , snake.getCreateBy()).orderByDesc("snakeLength"));
+        Snake snake1 = snakeIPage.getRecords().get(0);
+        return snake1;
     }
 }
 
