@@ -208,9 +208,9 @@ public class TestController {
     public void setScore(){
         Score score = new Score();
         score.setUserId("4fa3bd76a89946a09a1e1bba85413a01");
-        score.setScoreCheckpoint(1);
+        score.setScoreCheckpoint(8);
         score.setScoreDifficulty("低");
-        score.setScoreSC("1600");
+        score.setScoreSC("789000");
         HashMap<String , Object> map = new HashMap<>();
         map.put("userId" , score.getUserId());
         map.put("scoreCheckpoint" , score.getScoreCheckpoint());
@@ -236,7 +236,7 @@ public class TestController {
 //            score.setScoreSC("1100");
             score.setSnakeId("156418543212");
 //            score.setUserId("31112f5c840f42ad97e7e34a542e01b2");
-            score.setCreateBy("4fa3bd76a89946a09a1e1bba85413a01");
+            score.setCreateBy("大佬");
             score.setGmtCreate(df.format(new Date()));
             score.setGmtModified(df.format(new Date()));
             score.setIsDelete(0);

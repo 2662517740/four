@@ -124,7 +124,9 @@ public class ScoreController {
     @ApiOperation("排行榜")
     @GetMapping(value = "/getScoreList")
     @Transactional(readOnly = true)
-    public IPage<Score> getScoreList(Score score){
+    public IPage<Score> getScoreList(String scoreDifficulty){
+        ScoreVO score= new ScoreVO();
+        score.setScoreDifficulty(scoreDifficulty);
         IPage<Score> iPage = new Page<>();
         iPage.setPages(0);
         iPage.setCurrent(0L);

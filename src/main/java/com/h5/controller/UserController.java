@@ -61,7 +61,10 @@ public class UserController {
     @ApiOperation(value = "用户注册")
     @PostMapping(value = "registered")
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse registered(User user) throws UnsupportedEncodingException {
+    public AppResponse registered(String userName , String userPassword) throws UnsupportedEncodingException {
+        User user =new User();
+        user.setUserName(userName);
+        user.setUserPassword(userPassword);
         HashMap<String , Object> map = new HashMap<>();
         map.put("userName" , user.getUserName());
         List<User> list = (List<User>) userService.listByMap(map);
@@ -91,24 +94,35 @@ public class UserController {
      * @Param:UserVO
      */
     @ApiOperation(value = "用户登陆")
-    @GetMapping(value = "userLogin")
+    @PostMapping(value = "userLogin")
     @Transactional(readOnly = true)
-    public AppResponse userLogin(UserVO user) throws UnsupportedEncodingException {
+    public AppResponse userLogin(String userName , String userPassword) throws UnsupportedEncodingException {
+        UserVO user = new UserVO();
+        user.setUserName(userName);
+        user.setUserPassword(userPassword);
         HashMap<String , Object> map = new HashMap<>();
         map.put("userName" , user.getUserName());
         map.put("userPassword" , CreateMD5.getMd5(user.getUserPassword()));
+        UserVO uv = new UserVO();
         List<User> list = (List<User>) userService.listByMap(map);
-        String token = "";
+
+        String  token = "";
         if (list != null && 1 == list.size()){
             token = UUIDUtil.uuidStr();
-            redisUtils.LoginSet(token+"userID",list.get(0).getId(),loginTimeOut);
-            redisUtils.LoginSet(token+"userName",list.get(0).getUserName(),loginTimeOut);
-            redisUtils.LoginSet(token+"userNick",list.get(0).getUserNick(),loginTimeOut);
+            redisUtils.LoginSet(token+"_userID",list.get(0).getId(),loginTimeOut);
+            redisUtils.LoginSet(token+"_userName",list.get(0).getUserName(),loginTimeOut);
+            if (list.get(0).getUserNick() != null){
+                redisUtils.LoginSet(token+"_userNick",list.get(0).getUserNick(),loginTimeOut);
+            }
+            uv.setUser(list.get(0));
+            uv.setToken(token);
 //            redisUtils.LoginSet(token+"version",list.get(0).getVersion(),loginTimeOut);
         }else {
             return AppResponse.bizError("登陆失败,请重试！");
         }
-        return AppResponse.success("登陆成功！" , token);
+//        List<UserVO> list1 = (List<UserVO>) list.get(0);
+//        list1.get(0).setToken(token);
+        return AppResponse.success("登陆成功！" , uv);
     }
 
     /**
@@ -119,18 +133,24 @@ public class UserController {
     @ApiOperation(value = "修改密码")
     @PostMapping(value = "updatePassWord")
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updatePassWord(UserVO user) throws UnsupportedEncodingException {
+    public AppResponse updatePassWord(String userPassword,String userNewPassword , String token) throws UnsupportedEncodingException {
+        UserVO user = new UserVO();
+        user.setToken(token);
+        String id = redisUtils.get(user.getToken()+"_userID");
+        user.setId(id);
+        user.setUserPassword(userPassword);
+        user.setUserNewPassword(userNewPassword);
         user.setUserPassword(CreateMD5.getMd5(user.getUserPassword()));
         User user1 = userService.getById(user);
         if (user.getUserPassword().equals(user1.getUserPassword())){
-            return AppResponse.bizError("修改失败，请重试！");
-        }else {
             user1.setVersion(user1.getVersion()+1);
             user1.setUserPassword(CreateMD5.getMd5(user.getUserNewPassword()));
             user1.setGmtModified(df.format(new Date()));
             user1.setLastModifiedBy(user.getId());
             userService.updateById(user1);
             return AppResponse.success("修改成功！");
+        }else {
+            return AppResponse.bizError("修改失败，请重试！");
         }
     }
 
@@ -142,8 +162,13 @@ public class UserController {
     @ApiOperation(value = "修改昵称")
     @PostMapping(value ="updateNick")
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateNick(UserVO user){
-        String id = redisUtils.get(user.getToken());
+    public AppResponse updateNick(String userNick , String token){
+        UserVO user = new UserVO();
+        user.setToken(token);
+        user.setUserNick(userNick);
+        String id = redisUtils.get(user.getToken()+"_userID");
+        System.out.println(id);
+        user.setId(id);
         user.setLastModifiedBy(id);
 //        user.setLastModifiedBy("2960bd6730064ca9a64059693162ba47");
         user.setGmtModified(df.format(new Date()));
