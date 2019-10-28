@@ -59,8 +59,12 @@ public class ScoreController {
     @ApiOperation(value = "创建分数")
     @PostMapping(value = "setScore")
     @Transactional(readOnly = true)
-    public AppResponse setScore(ScoreVO score){
-        String userID = redisUtils.get(score.getToken());
+    public AppResponse setScore(int scoreCheckpoint , String scoreDifficulty , String scoreSC){
+        ScoreVO score = new ScoreVO();
+        score.setScoreCheckpoint(scoreCheckpoint);
+        score.setScoreDifficulty(scoreDifficulty);
+        score.setScoreSC(scoreSC);
+        String userID = redisUtils.get(score.getToken()+"_userID");
         score.setUserId(userID);
         HashMap<String , Object> map = new HashMap<>();
         map.put("userId" , score.getUserId());
@@ -103,7 +107,8 @@ public class ScoreController {
     @ApiOperation("查询分数")
     @GetMapping(value = "/getScore")
     @Transactional(readOnly = true)
-    public IPage<Score> getScore(ScoreVO score){
+    public IPage<Score> getScore(String UserID){
+        ScoreVO score = new ScoreVO();
         String id = redisUtils.get(score.getToken());
         score.setCreateBy(id);
 //        score.setCreateBy("31112f5c840f42ad97e7e34a542e01b2");
