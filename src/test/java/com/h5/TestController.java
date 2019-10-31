@@ -208,9 +208,9 @@ public class TestController {
     public void setScore(){
         Score score = new Score();
         score.setUserId("4fa3bd76a89946a09a1e1bba85413a01");
-        score.setScoreCheckpoint(8);
-        score.setScoreDifficulty("低");
-        score.setScoreSC("789000");
+        score.setScoreCheckpoint(7);
+        score.setScoreDifficulty("高");
+        score.setScoreSC("1530");
         HashMap<String , Object> map = new HashMap<>();
         map.put("userId" , score.getUserId());
         map.put("scoreCheckpoint" , score.getScoreCheckpoint());
@@ -222,7 +222,7 @@ public class TestController {
                 score.setGmtModified(df.format(new Date()));
                 score.setIsDelete(0);
                 score.setLastModifiedBy("4fa3bd76a89946a09a1e1bba85413a01");
-                score.setVersion(1);
+                score.setVersion(0);
                 score.setSortNo(0);
                 scoreService.updateById(score);
             }else {

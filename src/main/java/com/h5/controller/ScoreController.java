@@ -58,21 +58,25 @@ public class ScoreController {
      */
     @ApiOperation(value = "创建分数")
     @PostMapping(value = "setScore")
-    @Transactional(readOnly = true)
-    public AppResponse setScore(int scoreCheckpoint , String scoreDifficulty , String scoreSC){
-        ScoreVO score = new ScoreVO();
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse setScore(int scoreCheckpoint , String scoreDifficulty , String scoreSC,String token){
+        ScoreVO score1 = new ScoreVO();
+        Score score = new Score();
+        score1.setToken(token);
         score.setScoreCheckpoint(scoreCheckpoint);
         score.setScoreDifficulty(scoreDifficulty);
         score.setScoreSC(scoreSC);
-        String userID = redisUtils.get(score.getToken()+"_userID");
+        String userID = redisUtils.get(score1.getToken()+"_userID");
         score.setUserId(userID);
+//        System.out.println(score);
         HashMap<String , Object> map = new HashMap<>();
         map.put("userId" , score.getUserId());
         map.put("scoreCheckpoint" , score.getScoreCheckpoint());
         map.put("scoreDifficulty",score.getScoreDifficulty());
         List<Score> list = (List<Score>) scoreService.listByMap(map);
         if (list != null && list.size()!=0){
-            if ( list.get(0).getScoreSC().compareTo(score.getScoreSC()) < 0 ){
+//            System.out.println(list.get(0));
+            if ( Integer.valueOf(list.get(0).getScoreSC()) < Integer.valueOf(score.getScoreSC())  ){
                 score.setId(list.get(0).getId());
                 score.setGmtModified(df.format(new Date()));
                 score.setLastModifiedBy(list.get(0).getUserId());

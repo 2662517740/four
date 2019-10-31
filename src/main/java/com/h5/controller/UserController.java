@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * <p>
@@ -71,8 +72,10 @@ public class UserController {
         if (list != null && list.size() != 0){
             return AppResponse.bizError("用户名已存在！");
         }else {
+            Random random = new Random();
             user.setId(UUIDUtil.uuidStr());
             user.setUserPassword(CreateMD5.getMd5(user.getUserPassword()));
+            user.setUserNick("用户_"+((int)random.nextDouble()*(99999-10000+1))+10000);
             user.setCreateBy(user.getId());
             user.setGmtCreate(df.format(new Date()));
             user.setGmtModified(df.format(new Date()));
@@ -105,7 +108,6 @@ public class UserController {
         map.put("userPassword" , CreateMD5.getMd5(user.getUserPassword()));
         UserVO uv = new UserVO();
         List<User> list = (List<User>) userService.listByMap(map);
-
         String  token = "";
         if (list != null && 1 == list.size()){
             token = UUIDUtil.uuidStr();
@@ -122,7 +124,27 @@ public class UserController {
         }
 //        List<UserVO> list1 = (List<UserVO>) list.get(0);
 //        list1.get(0).setToken(token);
+       // System.out.println(uv);
         return AppResponse.success("登陆成功！" , uv);
+    }
+
+    /**
+     * @Description：获取用户信息
+     * @Date:2019/9/26
+     * @Param:
+     */
+    @ApiOperation(value = "获取用户信息")
+    @GetMapping(value = "getUser")
+    @Transactional(readOnly = true)
+    public User getUser(String token){
+        UserVO user = new UserVO();
+        user.setToken(token);
+        User user1 = new User();
+        user1.setId(redisUtils.get(user.getToken()+"_userID"));
+        user1.setUserName(redisUtils.get(user.getToken()+"_userName"));
+        user1.setUserNick(redisUtils.get(user.getToken()+"_userNick"));
+//        System.out.println(user1);
+        return user1;
     }
 
     /**
